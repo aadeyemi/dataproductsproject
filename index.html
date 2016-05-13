@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mortgage Primer</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Mortgage Primer">
+  <meta name="author" content="Adeyemi Arogunmati">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Mortgage Primer</h1>
+    <h2>The mortgage analysis tool</h2>
+    <p>Adeyemi Arogunmati<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>Mortgage Primer is a simple mortgage analysis tool</li>
+<li>It is hosted on shinyapps.io server at  <a href="https://adeyemiarogunmati.shinyapps.io/Primer/">https://adeyemiarogunmati.shinyapps.io/Primer/</a></li>
+<li>It is designed to be used for multiple purposes
+
+<ul>
+<li>simple mortgage monthly payment calculation</li>
+<li>loan balance calculation after n months</li>
+<li>loan term required to produce monthly payment given balance</li>
+<li>assessing balance reduction with or without additional payments</li>
+</ul></li>
+<li>It is user friendly and visually appealing</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Example Mortgage Calculation</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>Mortgage Primer (MP) functions are defined on the shiny server side</p></li>
+<li><p>These functions are hidden from the user</p></li>
+<li><p>To calculate mortgage payments, MP calls its <strong>calcMortgagePayment</strong> function</p></li>
+<li><p>An example function call is shown below:</p></li>
+</ul>
+
+<pre><code class="r">apr  &lt;- 3.375
+loan &lt;- 340000
+term &lt;- 30
+calcMortgagePayment (apr,loan,term)
+</code></pre>
+
+<pre><code>## [1] 1503.13
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Example Loan Payment Assessment</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>To assess loan balance reduction with yearly additional payments, MP calls its <strong>calcAmortizationScheduleWithYearlyPrincipal</strong> function</p></li>
+<li><p>For the previous example, to assess loan figures with yearly additional payment of $10,000, MP calls:</p></li>
+</ul>
+
+<pre><code class="r">d &lt;- calcAmortizationScheduleWithYearlyPrincipal(apr,loan,term,10000)
+</code></pre>
+
+<p><img src="figure/loan_balance_plot3-1.png" alt="plot of chunk loan_balance_plot3"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Conclusions</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Mortgage Primer (MP) is an easy to use mortgage analysis tool</li>
+<li>Its functions are defined in files hosted on the shiny.io server</li>
+<li>Its plots are created with visually appealing ggplot calls</li>
+<li>MP can be accessed by clicking this <a href="https://adeyemiarogunmati.shinyapps.io/Primer/">web link</a></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Example Mortgage Calculation'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Example Loan Payment Assessment'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Conclusions'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

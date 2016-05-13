@@ -1,0 +1,171 @@
+---
+title       : Mortgage Primer
+subtitle    : The mortgage analysis tool
+author      : Adeyemi Arogunmati
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+```{r init, include=FALSE}
+suppressWarnings(suppressMessages(library(lubridate)))
+suppressWarnings(suppressMessages(library(ggplot2)))
+```
+    
+## Introduction
+
+1. Mortgage Primer is a simple mortgage analysis tool
+2. It is hosted on shinyapps.io server at  <https://adeyemiarogunmati.shinyapps.io/Primer/>
+3. It is designed to be used for multiple purposes
+    - simple mortgage monthly payment calculation
+    - loan balance calculation after n months
+    - loan term required to produce monthly payment given balance
+    - assessing balance reduction with or without additional payments
+4. It is user friendly and visually appealing
+
+--- .class #id 
+
+## Example Mortgage Calculation
+
+- Mortgage Primer (MP) functions are defined on the shiny server side
+
+- These functions are hidden from the user
+
+- To calculate mortgage payments, MP calls its **calcMortgagePayment** function
+
+```{r mortgage_payment, echo=FALSE}
+calcMortgagePayment <- function(apr,loan,term) {
+    c <- apr/100/12   # APR per month
+    n <- term*12      # loan term in months
+    
+    numerator   <- loan * c * (1 + c)^n
+    denominator <- (1 + c)^n - 1
+    
+    P <- round(numerator/denominator,2)
+    
+    P
+}
+```
+
+- An example function call is shown below:
+
+```{r run_mortgage_calculation}
+apr  <- 3.375
+loan <- 340000
+term <- 30
+calcMortgagePayment (apr,loan,term)
+```
+
+--- .class #id 
+
+## Example Loan Payment Assessment
+
+- To assess loan balance reduction with yearly additional payments, MP calls its **calcAmortizationScheduleWithYearlyPrincipal** function
+
+
+```{r loan_balance, echo=FALSE}
+calcAmortizationScheduleWithYearlyPrincipal <- function(apr,loan,term,addPrincip,monthBegin=0) {
+    n <- term*12      # loan term in months
+    yp <- 0 # mp is yearly principal
+    balance <- loan
+    P <- calcMortgagePayment(apr,loan,term)
+    
+    
+    outputList <- list()
+    
+    cumInterest  <- 0
+    cumPrincipal <- 0
+    
+    for (i in seq(1,n)) {
+        
+        if ( i >= monthBegin & i%%12 == 1 ) yp <- addPrincip
+        else yp <- 0
+        
+        I <- calcInterestPaymentOnBalance (apr,balance)
+        
+        if (P-I < balance & P+yp-I > balance) {
+            yp <- balance - (P-I)
+        }
+        if (P-I >= balance) {
+            P <- balance + I
+            yp <- 0
+        }
+        
+        I  <- round(I,2)
+        P  <- round(P,2)
+        yp <- round(yp,2)
+        balance <- round(balance,2)
+        
+        balance0 <- balance
+        balance <- balance + I - (P + yp)
+        
+        cumInterest  <- cumInterest  + I
+        cumPrincipal <- cumPrincipal + P+yp-I
+        
+        outputList[[i]] <- c(balance0,i,I,P-I,P,yp,P+yp,cumInterest,cumPrincipal)
+        
+        if (balance^2 < 0.001) break
+    }
+    
+    output <- as.data.frame(do.call("rbind",outputList))
+    names(output) <- c("Principal.Balance","Month.Number","Interest.Payment",
+                       "Principal.Payment","Mortgage.Payment","Additional.Payment",
+                       "Total.Payment","Cummulative.Interest","Cummulative.Principal")
+    
+    output
+}
+
+addDateColumnToSchedule <- function(amortizationSchedule,startDate) {
+    
+    startDate <- as.Date(startDate)
+    dateVec <- startDate %m+% months(seq(0,nrow(amortizationSchedule)-1))
+    
+    newSchedule <- cbind(dateVec,amortizationSchedule)
+    
+    colnames(newSchedule)[1] <- "dates"
+    
+    newSchedule
+}
+
+calcInterestPaymentOnBalance <- function(apr,balance) {
+    c <- apr/100/12   # APR per month
+    I <- balance*c
+    I
+}
+```
+
+- For the previous example, to assess loan figures with yearly additional payment of $10,000, MP calls:
+
+```{r loan_balance_plot1, echo=FALSE}
+startDate <- as.Date("2012-08-31")
+```
+
+```{r loan_balance_plot2}
+d <- calcAmortizationScheduleWithYearlyPrincipal(apr,loan,term,10000)
+```
+
+```{r loan_balance_plot3, echo=FALSE, fig.height=4.5, fig.width=10}
+d <- addDateColumnToSchedule(d,startDate)
+g <- ggplot(d,aes(x = dates, y = Principal.Balance/1000, color="Loan Balance")) + 
+     geom_line() + 
+     geom_line(aes(x = dates, y = Cummulative.Principal/1000, color="Principal Paid")) +
+     geom_line(aes(x = dates, y = Cummulative.Interest/1000, color="Interest Paid")) +
+     labs(x = "Date",y = "Amount (x $1000)",title = "Amount over time") + 
+     theme(plot.background = element_rect(fill = "transparent",colour = NA))
+
+plot(g)
+```
+
+--- .class #id 
+
+## Conclusions
+
+- Mortgage Primer (MP) is an easy to use mortgage analysis tool
+- Its functions are defined in files hosted on the shiny.io server
+- Its plots are created with visually appealing ggplot calls
+- MP can be accessed by clicking this [web link] (https://adeyemiarogunmati.shinyapps.io/Primer/)
+
